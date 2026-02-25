@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: openfcs_db
+    restart: always
+    environment:
+      POSTGRES_USER: openfcs
+      POSTGRES_PASSWORD: openfcs
+      POSTGRES_DB: openfcs_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: openfcs_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://openfcs:openfcs@db:5432/openfcs_db
+
+volumes:
+  pgdata:
